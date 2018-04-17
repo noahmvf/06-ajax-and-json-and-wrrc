@@ -33,40 +33,47 @@ Article.prototype.toHtml = function() {
 // REVIEW: This function will take the rawData, how ever it is provided, and use it to instantiate all the articles. This code is moved from elsewhere, and encapsulated in a simply-named function for clarity.
 
 // COMMENT (COMPLETED): Where is this function called? What does 'rawData' represent now? How is this different from previous labs?
-// This function is called in the below, Article.fetchAll function. If the local storage contains the rawData, we run the Article.loadAll function. The rawData is an array of objects loaded from local storage. 
-Article.loadAll = articleData => {
-  articleData.sort((a,b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)))
+// This function is called in the below, Article.fetchAll function. If the local storage contains the rawData, we run the Article.loadAll function. The rawData is an array of objects loaded from local storage.
 
-  articleData.forEach(articleObject => Article.all.push(new Article(articleObject)))
-}
-
-let renderResults = (data) => {
-  let template = ('#article-template').html();
-  let searchTemplate = Handlebars.compile(template);
-
-  $('#articles ul').empty().hide();
-
-  data.forEach( (listItem) => {
-    $('#articles ul').append(searchTemplate(listItem));
-  });
-
-  $('#articles ul').fadeIn(125);
-};
 
 // REVIEW: This function will retrieve the data from either a local or remote source, and process it, then hand off control to the View.
 Article.fetchAll = () => {
   // REVIEW: What is this 'if' statement checking for? Where was the rawData set to local storage?
   if (localStorage.rawData) {
 
-    Article.loadAll();
+    Article.loadAll(JSON.parse(localStorage.rawData));
+    articleView.initIndexPage();
 
   } else {
-    let url = "hackerIpsum.json";
+    let url = '/data/hackerIpsum.json';
     $.getJSON(url)
-    .then(data => renderResults(data.results))
-    .catch(err => console.error('shit', err));
-    
+      .then(data => {
+        Article.loadAll(data);
+        localStorage.rawData = JSON.stringify(data);
+        articleView.initIndexPage();
+      })
+      .catch(err => console.error('poop', err));
+
+    console.log('fetched yo');
+
   }
 }
 
+Article.loadAll = articleData => {
+  articleData.sort((a,b) => (new Date(b.publishedOn)) - (new Date(a.publishedOn)))
 
+  articleData.forEach(articleObject => Article.all.push(new Article(articleObject)))
+}
+
+// let renderResults = ((data) => {
+//   let templateNew = $('#articles').html();
+//   let searchTemplate = Handlebars.compile(templateNew);
+
+//   $('#articles ul').empty();
+
+//   data.forEach( (listing) => {
+//     $('#articles ul').append(searchTemplate(listing));
+//   });
+
+//   $('#articles ul').fadeIn(125);
+// };
