@@ -53,9 +53,6 @@ Article.fetchAll = () => {
         articleView.initIndexPage();
       })
       .catch(err => console.error('poop', err));
-
-    console.log('fetched yo');
-
   }
 }
 
@@ -64,16 +61,3 @@ Article.loadAll = articleData => {
 
   articleData.forEach(articleObject => Article.all.push(new Article(articleObject)))
 }
-
-// let renderResults = ((data) => {
-//   let templateNew = $('#articles').html();
-//   let searchTemplate = Handlebars.compile(templateNew);
-
-//   $('#articles ul').empty();
-
-//   data.forEach( (listing) => {
-//     $('#articles ul').append(searchTemplate(listing));
-//   });
-
-//   $('#articles ul').fadeIn(125);
-// };
